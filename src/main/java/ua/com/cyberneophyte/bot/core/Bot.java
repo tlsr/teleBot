@@ -13,6 +13,9 @@ import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import ua.com.cyberneophyte.bot.comands.Command;
+import ua.com.cyberneophyte.bot.comands.CommandParser;
+import ua.com.cyberneophyte.bot.comands.ParsedCommand;
 import ua.com.cyberneophyte.bot.domain.Quote;
 import ua.com.cyberneophyte.bot.service.QuoteService;
 
@@ -25,6 +28,9 @@ public class Bot extends TelegramLongPollingBot {
 
     @Autowired
     private QuoteService quoteService;
+
+    @Autowired
+    private CommandParser commandParser;
 
     final int RECONNECT_PAUSE = 10000;
 
@@ -50,18 +56,34 @@ public class Bot extends TelegramLongPollingBot {
     public void onUpdateReceived(Update update) {
         log.debug("new Update recieve");
         if (update.hasMessage() && update.getMessage().hasText()) {
-                    Quote quote = quoteService
-                    .getRandomQuote();
+            String receivedMessageText = update.getMessage().getText();
+            ParsedCommand parsedCommand = commandParser.parseCommand(receivedMessageText );
+            Command command = parsedCommand.getCommand();
             SendMessage message = new SendMessage(); // Create a SendMessage object with mandatory fields
             message.setChatId(update.getMessage().getChatId().toString());
-            message.setText(quote.toString());
-            try {
-                execute(message); // Call method to send the message
-            } catch (TelegramApiException e) {
-                log.error("Error happend {}", e);
+            switch (command) {
+                case START:
+                    message.setText("Welcome to Latin quote bot" + "\n" +
+                            "Type /random for random quote");
+                    replay(message);
+                    break;
+                case RANDOM:
+                    Quote quote = quoteService.getRandomQuote();
+                    message.setText(quote.toString());
+                    replay(message);
+                    break;
             }
+
         }
 
+    }
+
+    private void replay(SendMessage message) {
+        try {
+            execute(message); // Call method to send the message
+        } catch (TelegramApiException e) {
+            log.error("Error happend {}", e);
+        }
     }
 
 
