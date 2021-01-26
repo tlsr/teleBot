@@ -12,24 +12,36 @@ public class CommandParser {
 
     public ParsedCommand parseCommand(String message){
         ParsedCommand parsedCommand = new ParsedCommand();
-        if(!isCommand(message) && !isCommandForMe(message)){
+        if(!isCommand(message)){
             return parsedCommand;
         }else{
-            String commandPart = "";
-            String textPart = "";
-            if(isCommandHasText(message)){
-                int firstSpace = message.indexOf(' ');
-                commandPart = message.substring(0,firstSpace);
-                textPart = message.substring(firstSpace+1);
-            }else{
-                commandPart = message;
-            }
-            int delimiterIndex = commandPart.indexOf(DELIMITER);
-            commandPart = commandPart.substring(1,delimiterIndex);
-            parsedCommand = new ParsedCommand(Command.valueOf(commandPart.toUpperCase(Locale.ROOT)),textPart);
+           parsedCommand = new ParsedCommand(getCommandFromMessage(message),getTextFromMessage(message));
         }
 
         return parsedCommand;
+    }
+
+    public Command getCommandFromMessage(String str){
+        String message = str;
+        if(isCommandHasText(message)){
+            int firstSpace = message.indexOf(' ');
+            System.out.println(firstSpace);
+            message = message.substring(0,firstSpace);
+        }
+        System.out.println(message);
+        if(isCommandHasBotName(message)){
+            int delimiterIndex = message.indexOf(DELIMITER);
+            message = message.substring(1,delimiterIndex);
+        }else{
+            message = message.substring(1);
+        }
+        return  Command.valueOf(message.toUpperCase(Locale.ROOT));
+    }
+
+    public String getTextFromMessage(String message){
+        int firstSpace = message.indexOf(' ');
+        message = message.substring(firstSpace+1);
+        return message;
     }
 
     public boolean isCommand(String message){
@@ -39,7 +51,7 @@ public class CommandParser {
         return false;
     }
 
-    public boolean isCommandForMe(String message){
+    public boolean isCommandHasBotName(String message){
         String regexp = "(.+@"+BOT_NAME+" .*)|(.+@"+BOT_NAME+")";
         if(message.matches(regexp)){
             return true;
@@ -48,7 +60,7 @@ public class CommandParser {
     }
 
     private boolean isCommandHasText(String message){
-        String regexp = "(.+@"+BOT_NAME+" .*)";
+        String regexp = "(.+(@"+BOT_NAME+")? .*)";
         if(message.matches(regexp)){
             return true;
         }

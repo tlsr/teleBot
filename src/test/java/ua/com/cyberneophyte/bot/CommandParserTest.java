@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 import ua.com.cyberneophyte.bot.comands.Command;
@@ -36,20 +35,33 @@ public class CommandParserTest {
     @ParameterizedTest
     @ValueSource(strings = {"/start@test_latin_quotes_bot","/start@test_latin_quotes_bot dsadsadas"})
     public void isCommandForMe(String command) throws Exception{
-        assertTrue(commandParser.isCommandForMe(command));
+        assertTrue(commandParser.isCommandHasBotName(command));
     }
 
     @ParameterizedTest
     @ValueSource(strings = {"/start@another_bot","/start@test_latin_quotes_botdsadsadas","/start@tanother_bot dsadsadas"})
     public void isCommandNotForMe(String command) throws Exception{
-        assertFalse(commandParser.isCommandForMe(command));
+        assertFalse(commandParser.isCommandHasBotName(command));
     }
 
-    @Test
-    public void parseCommand() throws Exception{
-        String command ="/start";
+    @ParameterizedTest
+    @ValueSource(strings = {"/start@test_latin_quotes_bot text","/start text"})
+    public void parseCommand(String command ) throws Exception{
         ParsedCommand actualParsedCommand = commandParser.parseCommand(command);
-        ParsedCommand expectedParsedCommand = new ParsedCommand(Command.START,"");
+        ParsedCommand expectedParsedCommand = new ParsedCommand(Command.START,"text");
         assertEquals(expectedParsedCommand,actualParsedCommand);
     }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"/start@test_latin_quotes_bot","/start@test_latin_quotes_bot dsadsadas","/start"})
+    public void getCommandFromMessage(String message){
+        assertEquals(Command.START,commandParser.getCommandFromMessage(message));
+    }
+    @ParameterizedTest
+    @ValueSource(strings = {"/start@test_latin_quotes_bot text","/start text"})
+    public void getTextFromMessage(String message){
+        assertEquals("text",commandParser.getTextFromMessage(message));
+    }
+
+
 }
