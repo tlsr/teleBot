@@ -1,5 +1,6 @@
 package ua.com.cyberneophyte.bot;
 
+import jdk.nashorn.internal.ir.annotations.Ignore;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -23,6 +24,7 @@ public class QuoteTest {
     @Sql(value = {"/create-quote-before.sql",},
             executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     @Sql(value = {"/delete-all-from-db.sql",}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    @Ignore
     public void quoteWithoutSourceToStringTest() throws Exception{
         Quote quote = quoteRepo.findQuoteById(1);
         String str = quote.toString();
@@ -31,6 +33,7 @@ public class QuoteTest {
         assertTrue(str.contains("От Бога король, от короля закон."));
     }
 
+    @Ignore
     @Test
     @Sql(value = {"/create-quote-before.sql",},
             executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
