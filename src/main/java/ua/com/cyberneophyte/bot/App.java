@@ -22,14 +22,11 @@ import java.util.List;
 @SpringBootApplication
 public class App implements CommandLineRunner {
     @Autowired
-    private Parser parser;
-    @Autowired
     private QuoteRepo quoteRepo;
     @Autowired
     private QuoteService quoteService;
     @Autowired
     private Bot bot;
-    /*   private static final Logger log = Logger.getLogger(App.class);*/
 
 
     public static void main(String[] args) {
@@ -41,16 +38,6 @@ public class App implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        // parser.fillDbWithQuotes();
-        //System.out.println(quoteRepo.getAllIds());
-        /*List<Quote> list = parser.parse();
-        for (Quote q : list) {
-            if (!q.getSource().isEmpty()) {
-                System.out.println(q);
-            }
-        }
-        Quote quote = quoteService.getRandomQuote();
-        System.out.println(quote.getQuoteText() + "\n" + quote.getQuoteTranslate());*/
         try {
             TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
             botsApi.registerBot(bot);
