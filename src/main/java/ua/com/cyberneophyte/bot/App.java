@@ -12,7 +12,6 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 import ua.com.cyberneophyte.bot.core.Bot;
 import ua.com.cyberneophyte.bot.domain.Quote;
-import ua.com.cyberneophyte.bot.parser.Parser;
 import ua.com.cyberneophyte.bot.repos.QuoteRepo;
 import ua.com.cyberneophyte.bot.service.QuoteService;
 
