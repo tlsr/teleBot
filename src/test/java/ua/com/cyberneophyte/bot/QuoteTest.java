@@ -41,6 +41,7 @@ public class QuoteTest {
     public void quoteWithSourceToStringTest() throws Exception{
         Quote quote = quoteRepo.findQuoteById(3);
         String str = quote.toString();
+        System.out.println(str);
         assertFalse(quote.getSource().isEmpty());
         assertTrue(str.matches(".+\n.+\n.+"));// regexp represents string with 2 \n
         assertTrue(str.contains("Ab altero expectes, alteri quod feceris."));
